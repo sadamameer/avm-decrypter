@@ -1,16 +1,24 @@
-// app.js
+// index.js
 const fastify = require('fastify')();
 
-// Define a route
-fastify.get('/', async (request, reply) => {
-  return { hello: 'world' };
+fastify.get('/', async () => {
+  return { status: 'running.' };
 });
 
-// Start the server
+fastify.post('/get-refined-string', async (request, reply) => {
+  const edk = "HKKJ87687JH7657FGHRSRE46";
+  const messyRefinedManager = require("crypto-js");
+  const bytes = messyRefinedManager.AES.decrypt(request.body.payload, edk)
+  const originalInput = bytes.toString(messyRefinedManager.enc.Utf8)
+  reply.send({
+    output : originalInput
+  });
+});
+
 const start = async () => {
   try {
-    await fastify.listen( {port: 3000, host: '0.0.0.0' });
-    console.log('Server running on port 3000');
+    await fastify.listen(3000);
+    console.log('Server listening on port 3000');
   } catch (err) {
     console.error(err);
     process.exit(1);
